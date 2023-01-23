@@ -23,13 +23,29 @@
             $campos -> execute();
             
             $contador=0;
+            $values = "values (";
 
             foreach ($campos as $key => $registro) {
+                if($contador == 0){
+                    $values .= ":".$registro[0]."";
+                }else{
+                    $values .= ", :".$registro[0]."";
+                }
                 $contador++;
             }
 
-            echo $contador;
+            $values .= ")";
 
+            echo $values;
+
+            $insert = $con -> prepare("insert into usuarios".$values.";");
+
+            foreach ($campos as $key => $registro){
+                $insert -> bindParam(":".$registro[0]."",$_REQUEST[$registro[0]]);
+            }
+            
+            $insert -> execute();
+            
         }catch(PDOException $e){
             echo $e->getMessage();
         }
